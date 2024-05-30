@@ -1,5 +1,5 @@
 import { v2 as cloudinary } from "cloudinary";
-import { log } from "console";
+
 import { response } from "express";
 import fs from "fs"
 
@@ -24,7 +24,7 @@ const uploadOnCloudinary = async(localFilePath) => {
         return response;
     } catch (error) {
         fs.unlinkSync(localFilePath)
-            // remove the locally saved temporay file as  the  upload 
+        return null; // remove the locally saved temporay file as  the  upload 
     }
 }
 

@@ -1,0 +1,39 @@
+{
+    "javascript.format.insertSpaceAfterConstructor": false,
+    "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": false,
+    "javascript.inlayHints.parameterNames.enabled": "none",
+    "javascript.inlayHints.functionLikeReturnTypes.enabled": true,
+    "javascript.inlayHints.parameterTypes.enabled": false,
+    "editor.autoClosingQuotes": "languageDefined",
+    "workbench.settings.useSplitJSON": false,
+    "js/ts.implicitProjectConfig.strictFunctionTypes": true,
+    "js/ts.implicitProjectConfig.strictNullChecks": true,
+    "js/ts.implicitProjectConfig.target": "ES2020",
+    "js/ts.implicitProjectConfig.module": "ESNext",
+    "debug.javascript.pickAndAttachOptions": {
+
+
+    },
+    "debug.javascript.terminalOptions": {
+
+    },
+    "javascript.format.insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces": false,
+    "json.schemas": [
+
+
+    ],
+    "debug.javascript.breakOnConditionalError": false,
+    "tailwindCSS.experimental.configFile": null,
+    "debug.javascript.debugByLinkOptions": "on",
+    "debug.javascript.defaultRuntimeExecutable": {
+
+      
+    },
+    "liveServer.settings.AdvanceCustomBrowserCmdLine": "",
+    "liveServer.settings.ChromeDebuggingAttachment": false,
+    "liveServer.settings.mount": [
+
+    ],
+    "liveServer.settings.root": "",
+    "editor.indentSize": "tabSize"
+}
