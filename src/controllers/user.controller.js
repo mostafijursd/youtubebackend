@@ -3,7 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.model.js"
 import { upload } from "../middlewares/multer.middleware.js";
 import { uploadOnCloudinary } from "../utils/cloudInary.js";
-
+import { ApiResponse } from "../utils/ApiResponse.js";
 const registerUser = asyncHandler(async(req, res) => {
     // get user details from frontend 
     //validation - not empty 
@@ -41,7 +41,7 @@ const registerUser = asyncHandler(async(req, res) => {
     }
 
     // if (
-    //     [fullName, email, username, password].some((field) => field ? .trim() === "")) {
+    //     [fullName, email, username, password].some((field) => field?.trim() === "")) {
     //     throw new ApiError(400, "All field is required ")
     // }
 
@@ -52,23 +52,17 @@ const registerUser = asyncHandler(async(req, res) => {
     //     avaterLocalPath = 'default_avatar_path';
     // }
 
-    const avaterLocalPath = req.files && req.files.avatar && req.files.avatar[0] ?
-        req.files.avatar[0].path :
-        'default_avatar_path';
+    const avaterLocalPath = req.files && req.files.avater && req.files.avater[0] && req.files.avater[0].path;
+    const coverImageLocalPath = req.files && req.files.coverImage && req.files.coverImage[0] && req.files.coverImage[0].path;
 
-    // If avatar file is mandatory, throw an error
-    if (avaterLocalPath === 'default_avatar_path') {
+    if (!avaterLocalPath) {
         throw new ApiError(400, "Avatar file is required");
     }
 
-    const coverImageLocalPath = (req.files && req.files.coverImage && req.files.coverImage[0] && req.files.coverImage[0].path) || 'default_cover_image_path';
-
-    // Assuming cover image is required
-    const isCoverImageRequired = true; // Set based on your logic
-
-    if (isCoverImageRequired && coverImageLocalPath === 'default_cover_image_path') {
+    if (!coverImageLocalPath) {
         throw new ApiError(400, "Cover image file is required");
     }
+
 
     // const avaterLocalPath = req.files ? .avater ? .[0] ? .path;
     // const coverIamgeLocalPath = req.files ? .coverImage[0] ? .path;
@@ -86,15 +80,24 @@ const registerUser = asyncHandler(async(req, res) => {
     if (!avater) {
         throw new ApiError(400, "Avatar file is required");
     }
-    User.create({
+    const user = await User.create({
         fullName,
         avater: avater.url,
-        coverImage: coverImage ? .url,
+        coverImage: coverImage ? coverImage.url : undefined || "",
         email,
         password,
         username: username.toLowerCase()
     })
+    const createdUser = await User.findById(user._id).select(
+        "-password - refreshToken"
+    )
 
+    if (!createdUser) {
+        throw new ApiError(500, "Somethong went wrong while registering the user")
+    }
+    return res.status(201).json(
+        new ApiResponse(200, createdUser, "User registered successfully  ")
+    )
 })
 
 export { registerUser }
