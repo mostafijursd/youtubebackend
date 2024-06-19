@@ -3,6 +3,23 @@ import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.model.js"
 import { uploadOnCloudinary } from "../utils/cloudInary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+
+const generateAccessAndReferesh = async(userId) => {
+    try {
+        const user = await User.findById(userId)
+        const accessToekn = user.generateAccessToken()
+        const refreshToken = user.generateRefreeshToken()
+        user.refreshToken = refreshToken
+        await user.save({ validateBeforeSave: false })
+
+        return { accessToekn, refreshToken }
+
+    } catch (error) {
+        throw new ApiError(500, "Something went wrong while generating refersh and access token ")
+    }
+}
+
+
 const registerUser = asyncHandler(async(req, res) => {
     // get user details from frontend 
     //validation - not empty 
@@ -123,9 +140,54 @@ const loginUser = asyncHandler(async(req, res) => {
 
 
     if (!username || !email) {
-        throw new ApiError(400, "username or password rquired ")
+        throw new ApiError(400, "username or email rquired ")
     }
-})
+
+    const user = await User.findOne({
+        $or: [{ username }, { email }]
+    })
+
+    if (!user) {
+        throw new ApiError(404, "User does not exist")
+    }
+
+    const isPasswordValid = await user.isPasswordCorrect(password)
+
+    if (!isPasswordValid) {
+        throw new ApiError(401, "Invalid user credentials")
+    }
+
+    const { accessToekn, refreshToken } = await generateAccessAndReferesh(user._id)
+
+    const loggedInUser = await User.findById(user._id).select("-password - refreshToken", )
+
+    const options = {
+        httpOnly: true,
+        secure: true
+    }
+
+    return res
+        .status(200)
+        .cookie("accessToken", accessToekn, options)
+        .cookie("retreshToken", refreshToken, options)
+        .json(
+            new ApiResponse(
+                200, {
+                    user: loggedInUser,
+                    accessToekn,
+                    refreshToken
+                },
+
+                "User Loggend In Successfully"
+
+            )
+
+
+        )
+});
+
+
+
 export {
     registerUser,
     loginUser
