@@ -186,6 +186,9 @@ const loginUser = asyncHandler(async(req, res) => {
         )
 });
 
+const loggoutUser = asyncHandler(async(req, res) => {
+    User.findById
+})
 
 
 export {
