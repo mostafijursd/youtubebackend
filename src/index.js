@@ -12,6 +12,10 @@ connectDB()
             ${process.env.PORT}`);
         })
 
+
+
+        //  mongoose.connection.close();
+
     })
     .catch((error) => {
         console.log("MONGO BD connection failed !! ", error);
